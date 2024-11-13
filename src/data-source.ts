@@ -35,7 +35,7 @@ const { DATABASE_URL } = process.env;
 
 export const AppDataSource = new DataSource({
   type: "postgres",
-  url: DATABASE_URL,
+  url: "postgresql://postgres:VLCfPengmpwglLhUJxNarrqHzkZdcvbd@autorack.proxy.rlwy.net:58904/railway",
   synchronize: false,
   logging: false,
   entities: [
@@ -68,7 +68,6 @@ export const AppDataSource = new DataSource({
   migrations: [path.join(__dirname, "/migration/*.ts")],
   subscribers: [path.join(__dirname, "/subscriber/**/*.ts")],
 });
-
 export const initializeDataSource = async () => {
   try {
     await AppDataSource.initialize();

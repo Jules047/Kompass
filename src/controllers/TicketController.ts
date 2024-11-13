@@ -45,15 +45,14 @@ export class TicketController {
       });
 
       await this.ticketRepository.save(ticket);
-      response.json({ message: "Ticket créé", ticket });
+      return response.json({ message: "Ticket créé", ticket });
     } catch (error) {
       console.error("Erreur lors de la création du ticket:", error);
-      response
+      return response
         .status(500)
         .json({ message: "Erreur lors de la création du ticket", error });
     }
   }
-
   async getAllTickets(request: Request, response: Response) {
     try {
       const tickets = await this.ticketRepository.find({
@@ -68,7 +67,7 @@ export class TicketController {
     }
   }
 
-  async getTicketById(request: Request, response: Response) {
+  async getTicketById(request: Request, response: Response): Promise<Response> {
     try {
       const id = parseInt(request.params.id);
       if (isNaN(id)) {
@@ -79,13 +78,13 @@ export class TicketController {
         relations: ["client", "priseEnCharge", "vendeur"],
       });
       if (ticket) {
-        response.json(ticket);
+        return response.json(ticket);
       } else {
-        response.status(404).json({ message: "Ticket non trouvé" });
+        return response.status(404).json({ message: "Ticket non trouvé" });
       }
     } catch (error) {
       console.error("Erreur lors de la récupération du ticket:", error);
-      response
+      return response
         .status(500)
         .json({ message: "Erreur lors de la récupération du ticket", error });
     }
@@ -101,16 +100,18 @@ export class TicketController {
 
       const updatedTicket = Object.assign(ticket, request.body);
       await this.ticketRepository.save(updatedTicket);
-      response.json({ message: "Ticket mis à jour", ticket: updatedTicket });
+      return response.json({
+        message: "Ticket mis à jour",
+        ticket: updatedTicket,
+      });
     } catch (error) {
       console.error("Erreur lors de la mise à jour du ticket:", error);
-      response
+      return response
         .status(500)
         .json({ message: "Erreur lors de la mise à jour du ticket", error });
     }
   }
-
-  async deleteTicket(request: Request, response: Response) {
+  async deleteTicket(request: Request, response: Response): Promise<Response> {
     try {
       const id = parseInt(request.params.id);
       const ticket = await this.ticketRepository.findOne({ where: { id } });
@@ -118,16 +119,15 @@ export class TicketController {
         return response.status(404).json({ message: "Ticket non trouvé" });
       }
       await this.ticketRepository.remove(ticket);
-      response.json({ message: "Ticket supprimé" });
+      return response.json({ message: "Ticket supprimé" });
     } catch (error) {
       console.error("Erreur lors de la suppression du ticket:", error);
-      response
+      return response
         .status(500)
         .json({ message: "Erreur lors de la suppression du ticket", error });
     }
   }
-
-  async generatePDF(request: Request, response: Response) {
+  async generatePDF(request: Request, response: Response): Promise<void> {
     try {
       const id = parseInt(request.params.id);
       const ticket = await this.ticketRepository.findOne({
@@ -136,7 +136,8 @@ export class TicketController {
       });
 
       if (!ticket) {
-        return response.status(404).json({ message: "Ticket non trouvé" });
+        response.status(404).json({ message: "Ticket non trouvé" });
+        return;
       }
 
       const doc = new PDFDocument({ size: "A4", margin: 50 });

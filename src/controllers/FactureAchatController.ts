@@ -65,7 +65,7 @@ export class FactureAchatController {
     }
   }
 
-  async createFactureAchat(request: Request, response: Response) {
+  async createFactureAchat(request: Request, response: Response): Promise<void> {
     const queryRunner = AppDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -87,9 +87,10 @@ export class FactureAchatController {
       });
 
       if (!fournisseur || !moyenPaiement) {
-        return response.status(404).json({
+        response.status(404).json({
           message: "Fournisseur ou Moyen de paiement non trouvé",
         });
+        return;
       }
 
       let montantInitial = 0;
@@ -102,9 +103,10 @@ export class FactureAchatController {
           });
 
           if (!article) {
-            return response.status(404).json({
+            response.status(404).json({
               message: `Article avec l'ID ${articleData.id} non trouvé`,
             });
+            return;
           }
 
           const articleMontant =
@@ -117,9 +119,10 @@ export class FactureAchatController {
           factureAchatDetails.push(factureAchatDetail);
         }
       } else {
-        return response.status(400).json({
+        response.status(400).json({
           message: "Les articles doivent être fournis sous forme de tableau",
         });
+        return;
       }
 
       const montantRegleValue = Number(montant_regle) || 0;
@@ -359,7 +362,7 @@ export class FactureAchatController {
     }
   }
 
-  async generatePDF(request: Request, response: Response) {
+  async generatePDF(request: Request, response: Response): Promise<void> {
     try {
       const id = parseInt(request.params.id);
       const factureAchat = await this.factureAchatRepository.findOne({
@@ -373,9 +376,10 @@ export class FactureAchatController {
       });
 
       if (!factureAchat) {
-        return response
+        response
           .status(404)
           .json({ message: "Facture achat non trouvée" });
+        return;
       }
 
       const doc = new PDFDocument({ size: "A4", margin: 50 });
@@ -489,8 +493,7 @@ export class FactureAchatController {
         .status(500)
         .json({ message: "Erreur lors de la génération du PDF", error });
     }
-  }
-}
+  }}
 
 function sanitizeFactureAchat(facture: FactureAchat) {
   const { factureAchatDetails, ...sanitizedFacture } = facture;

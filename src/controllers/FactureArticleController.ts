@@ -17,7 +17,7 @@ export class FactureArticleController {
   private factureArticleDetailRepository =
     AppDataSource.getRepository(FactureArticleDetail);
 
-  async createFactureArticle(request: Request, response: Response) {
+  async createFactureArticle(request: Request, response: Response): Promise<Response> {
     try {
       const {
         clients_id,
@@ -101,25 +101,24 @@ export class FactureArticleController {
       });
 
       if (factureComplete) {
-        response.json({
+        return response.json({
           message: "Facture article créée",
           facture: factureComplete,
         });
       } else {
-        response.status(404).json({
+        return response.status(404).json({
           message:
             "Facture article créée mais non trouvée lors de la récupération",
         });
       }
     } catch (error) {
       console.error("Erreur lors de la création de la facture article:", error);
-      response.status(500).json({
+      return response.status(500).json({
         message: "Erreur lors de la création de la facture article",
         error,
       });
     }
   }
-
   async getAllFacturesArticle(request: Request, response: Response) {
     try {
       const facturesArticle = await this.factureArticleRepository.find({
@@ -262,7 +261,7 @@ export class FactureArticleController {
   //   }
   // }
 
-  async updateFactureArticle(request: Request, response: Response) {
+  async updateFactureArticle(request: Request, response: Response): Promise<Response> {
     try {
       const id = parseInt(request.params.id);
       const factureArticle = await this.factureArticleRepository.findOne({
@@ -330,7 +329,7 @@ export class FactureArticleController {
         }
       );
 
-      response.json({
+      return response.json({
         message: "Facture article mise à jour",
         factureArticle: updatedFactureArticle,
       });
@@ -339,13 +338,14 @@ export class FactureArticleController {
         "Erreur lors de la mise à jour de la facture article:",
         error
       );
-      response.status(500).json({
+      return response.status(500).json({
         message: "Erreur lors de la mise à jour de la facture article",
         error,
       });
     }
-  }
-  async deleteFactureArticle(request: Request, response: Response) {
+  }  
+  
+  async deleteFactureArticle(request: Request, response: Response): Promise<Response> {
     try {
       const id = parseInt(request.params.id);
       const factureArticle = await this.factureArticleRepository.findOne({
@@ -358,20 +358,19 @@ export class FactureArticleController {
           .json({ message: "Facture article non trouvée" });
       }
       await this.factureArticleRepository.remove(factureArticle);
-      response.json({ message: "Facture article supprimée" });
+      return response.json({ message: "Facture article supprimée" });
     } catch (error) {
       console.error(
         "Erreur lors de la suppression de la facture article:",
         error
       );
-      response.status(500).json({
+      return response.status(500).json({
         message: "Erreur lors de la suppression de la facture article",
         error,
       });
     }
   }
-
-  async generatePDF(request: Request, response: Response) {
+  async generatePDF(request: Request, response: Response): Promise<void | Response> {
     try {
       const id = parseInt(request.params.id);
       const factureArticle = await this.factureArticleRepository.findOne({
@@ -497,9 +496,8 @@ export class FactureArticleController {
       doc.end();
     } catch (error) {
       console.error("Erreur lors de la génération du PDF:", error);
-      response
+      return response
         .status(500)
         .json({ message: "Erreur lors de la génération du PDF", error });
     }
-  }
-}
+  }}

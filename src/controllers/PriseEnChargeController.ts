@@ -293,7 +293,7 @@ export class PriseEnChargeController {
     }
   }
 
-  async deletePriseEnCharge(request: Request, response: Response) {
+  async deletePriseEnCharge(request: Request, response: Response): Promise<void> {
     try {
       const id = parseInt(request.params.id);
       const priseEnCharge = await this.priseEnChargeRepository.findOne({
@@ -301,9 +301,10 @@ export class PriseEnChargeController {
         relations: ["priseEnChargeArticles"],
       });
       if (!priseEnCharge) {
-        return response
+        response
           .status(404)
           .json({ message: "Prise en charge non trouvée" });
+        return;
       }
       await this.priseEnChargeRepository.remove(priseEnCharge);
       response.json({ message: "Prise en charge supprimée" });
@@ -349,17 +350,16 @@ export class PriseEnChargeController {
       if (request.file) {
         priseEnCharge.signature_path = request.file.path;
         await this.priseEnChargeRepository.save(priseEnCharge);
-        response.json({
+        return response.json({
           message: "Signature uploadée avec succès🥰",
           priseEnCharge,
         });
       } else {
-        response.status(400).json({ message: "Aucun fichier n'a été uploadé" });
+        return response.status(400).json({ message: "Aucun fichier n'a été uploadé" });
       }
-    });
-  }
+    });  }
 
-  async generatePDF(request: Request, response: Response) {
+  async generatePDF(request: Request, response: Response): Promise<void> {
     try {
       const id = parseInt(request.params.id);
       const priseEnCharge = await this.priseEnChargeRepository.findOne({
@@ -374,9 +374,10 @@ export class PriseEnChargeController {
       });
 
       if (!priseEnCharge) {
-        return response
+        response
           .status(404)
           .json({ message: "Prise en charge non trouvée" });
+        return;
       }
 
       const doc = new PDFDocument({ size: "A4", margin: 50 });
@@ -538,8 +539,7 @@ export class PriseEnChargeController {
         .status(500)
         .json({ message: "Erreur lors de la génération du PDF", error });
     }
-  }
-}
+  }}
 function sanitizePriseEnCharge(priseEnCharge: PriseEnCharge) {
   const { priseEnChargeArticles, ...sanitizedPriseEnCharge } = priseEnCharge;
   return {

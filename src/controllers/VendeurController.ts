@@ -50,13 +50,12 @@ export class VendeurController {
       }
       this.vendeurRepository.merge(vendeur, request.body);
       await this.vendeurRepository.save(vendeur);
-      response.json({ message: "Vendeur mis à jour", vendeur });
+      return response.json({ message: "Vendeur mis à jour", vendeur });
     } catch (error) {
       console.error("Erreur lors de la mise à jour du vendeur:", error);
-      response.status(500).json({ message: "Erreur lors de la mise à jour du vendeur", error });
+      return response.status(500).json({ message: "Erreur lors de la mise à jour du vendeur", error });
     }
   }
-
   async deleteVendeur(request: Request, response: Response) {
     try {
       const id = parseInt(request.params.id);
@@ -65,10 +64,9 @@ export class VendeurController {
         return response.status(404).json({ message: "Vendeur non trouvé" });
       }
       await this.vendeurRepository.remove(vendeur);
-      response.json({ message: "Vendeur supprimé" });
+      return response.json({ message: "Vendeur supprimé" });
     } catch (error) {
       console.error("Erreur lors de la suppression du vendeur:", error);
-      response.status(500).json({ message: "Erreur lors de la suppression du vendeur", error });
+      return response.status(500).json({ message: "Erreur lors de la suppression du vendeur", error });
     }
-  }
-}
+  }}

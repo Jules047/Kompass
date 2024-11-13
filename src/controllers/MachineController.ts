@@ -50,13 +50,12 @@ export class MachineController {
       }
       this.machineRepository.merge(machine, request.body);
       await this.machineRepository.save(machine);
-      response.json({ message: "Machine mise à jour", machine });
+      return response.json({ message: "Machine mise à jour", machine });
     } catch (error) {
       console.error("Erreur lors de la mise à jour de la machine:", error);
-      response.status(500).json({ message: "Erreur lors de la mise à jour de la machine", error });
+      return response.status(500).json({ message: "Erreur lors de la mise à jour de la machine", error });
     }
   }
-
   async deleteMachine(request: Request, response: Response) {
     try {
       const id = parseInt(request.params.id);
@@ -65,10 +64,9 @@ export class MachineController {
         return response.status(404).json({ message: "Machine non trouvée" });
       }
       await this.machineRepository.remove(machine);
-      response.json({ message: "Machine supprimée" });
+      return response.json({ message: "Machine supprimée" });
     } catch (error) {
       console.error("Erreur lors de la suppression de la machine:", error);
-      response.status(500).json({ message: "Erreur lors de la suppression de la machine", error });
+      return response.status(500).json({ message: "Erreur lors de la suppression de la machine", error });
     }
-  }
-}
+  }}

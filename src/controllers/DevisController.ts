@@ -118,7 +118,7 @@ export class DevisController {
   //   }
   // }
 
-  async createDevis(request: Request, response: Response) {
+  async createDevis(request: Request, response: Response): Promise<Response> {
     try {
       const {
         clients_id,
@@ -168,7 +168,7 @@ export class DevisController {
           totalTarif += articleTarif;
 
           const devisArticle = new DevisArticle();
-          devisArticle.article = article; // article est l'objet Article complet récupéré de la base de données
+          devisArticle.article = article;
           devisArticle.quantite = articleData.quantite;
           devisArticles.push(devisArticle);
         }
@@ -190,7 +190,7 @@ export class DevisController {
         acompte: acompteValue,
         reste_payer,
         client,
-        devisArticles, // Utilisez devisArticles au lieu de article
+        devisArticles,
         moyenPaiement,
       });
 
@@ -207,21 +207,20 @@ export class DevisController {
       });
 
       if (devisComplet) {
-        response.json({ message: "Devis créé", devis: devisComplet, warnings });
+        return response.json({ message: "Devis créé", devis: devisComplet, warnings });
       } else {
-        response.status(404).json({
+        return response.status(404).json({
           message: "Devis créé mais non trouvé lors de la récupération",
         });
       }
     } catch (error) {
       console.error("Erreur lors de la création du devis:", error);
-      response
+      return response
         .status(500)
         .json({ message: "Erreur lors de la création du devis", error });
     }
   }
-
-  async updateDevis(request: Request, response: Response) {
+  async updateDevis(request: Request, response: Response): Promise<Response> {
     try {
       const id = parseInt(request.params.id);
       const devis = await this.devisRepository.findOne({
@@ -308,19 +307,18 @@ export class DevisController {
         ],
       });
 
-      response.json({
+      return response.json({
         message: "Devis mis à jour",
         devis: savedDevis,
         warnings,
       });
     } catch (error) {
       console.error("Erreur lors de la mise à jour du devis:", error);
-      response
+      return response
         .status(500)
         .json({ message: "Erreur lors de la mise à jour du devis", error });
     }
   }
-
   async getAllDevis(request: Request, response: Response) {
     try {
       const devis = await this.devisRepository.find({
@@ -445,7 +443,7 @@ export class DevisController {
   //   }
   // }
 
-  async deleteDevis(request: Request, response: Response) {
+  async deleteDevis(request: Request, response: Response): Promise<Response> {
     try {
       const id = parseInt(request.params.id);
       const devis = await this.devisRepository.findOne({ where: { id } });
@@ -456,15 +454,14 @@ export class DevisController {
         fs.unlinkSync(devis.signature_path);
       }
       await this.devisRepository.remove(devis);
-      response.json({ message: "Devis supprimé" });
+      return response.json({ message: "Devis supprimé" });
     } catch (error) {
       console.error("Erreur lors de la suppression du devis:", error);
-      response
+      return response
         .status(500)
         .json({ message: "Erreur lors de la suppression du devis", error });
     }
   }
-
   async uploadSignature(request: Request, response: Response) {
     upload.single("signature")(request, response, async (err) => {
       if (err) {
@@ -488,14 +485,13 @@ export class DevisController {
       if (request.file) {
         devis.signature_path = request.file.path;
         await this.devisRepository.save(devis);
-        response.json({ message: "Signature uploadée avec succès🥰", devis });
+        return response.json({ message: "Signature uploadée avec succès🥰", devis });
       } else {
-        response.status(400).json({ message: "Aucun fichier n'a été uploadé" });
+        return response.status(400).json({ message: "Aucun fichier n'a été uploadé" });
       }
-    });
-  }
+    });  }
 
-  async generatePDF(request: Request, response: Response) {
+  async generatePDF(request: Request, response: Response): Promise<void | Response> {
     try {
       const id = parseInt(request.params.id);
       const devis = await this.devisRepository.findOne({
@@ -651,9 +647,8 @@ export class DevisController {
       doc.end();
     } catch (error) {
       console.error("Erreur lors de la génération du PDF:", error);
-      response
+      return response
         .status(500)
         .json({ message: "Erreur lors de la génération du PDF", error });
     }
-  }
-}
+  }}

@@ -7,14 +7,15 @@ export class ClientController {
   private clientRepository = AppDataSource.getRepository(Client);
   private segmentationRepository = AppDataSource.getRepository(Segmentation);
 
-  async createClient(request: Request, response: Response) {
+  async createClient(request: Request, response: Response): Promise<void> {
     try {
       const { segment_id, ...clientData } = request.body;
       const segment = await this.segmentationRepository.findOne({
         where: { id: segment_id },
       });
       if (!segment) {
-        return response.status(404).json({ message: "Segment non trouvé" });
+        response.status(404).json({ message: "Segment non trouvé" });
+        return;
       }
       const client = this.clientRepository.create({
         ...clientData,
@@ -30,7 +31,6 @@ export class ClientController {
         .json({ message: "Erreur lors de la création du client", error });
     }
   }
-
   async getAllClients(request: Request, response: Response) {
     try {
       const clients = await this.clientRepository.find({
@@ -88,15 +88,14 @@ export class ClientController {
       }
       Object.assign(client, clientData);
       await this.clientRepository.save(client);
-      response.json({ message: "Client mis à jour", client });
+      return response.json({ message: "Client mis à jour", client });
     } catch (error) {
       console.error("Erreur lors de la mise à jour du client:", error);
-      response
+      return response
         .status(500)
         .json({ message: "Erreur lors de la mise à jour du client", error });
     }
   }
-
   async deleteClient(request: Request, response: Response) {
     try {
       const id = parseInt(request.params.id);
@@ -105,12 +104,11 @@ export class ClientController {
         return response.status(404).json({ message: "Client non trouvé" });
       }
       await this.clientRepository.remove(client);
-      response.json({ message: "Client supprimé" });
+      return response.json({ message: "Client supprimé" });
     } catch (error) {
       console.error("Erreur lors de la suppression du client:", error);
-      response
+      return response
         .status(500)
         .json({ message: "Erreur lors de la suppression du client", error });
     }
-  }
-}
+  }}

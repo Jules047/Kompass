@@ -137,13 +137,14 @@ export class ArticleController {
         relations: ["famille", "sousfamille"]
       });
 
-      response.status(201).json(completeArticle);
+      return response.status(201).json(completeArticle);
     } catch (error) {
       console.error("Erreur lors de la création de l'article:", error);
-      response.status(500).json({ message: "Erreur lors de la création de l'article", error });
+      return response.status(500).json({ message: "Erreur lors de la création de l'article", error });
     }
-  }
-  async updateArticle(request: Request, response: Response) {
+  }  
+  
+  async updateArticle(request: Request, response: Response): Promise<Response> {
     try {
       const id = parseInt(request.params.id);
       const article = await this.articleRepository.findOne({ where: { id } });
@@ -153,16 +154,15 @@ export class ArticleController {
 
       const updatedArticle = Object.assign(article, request.body);
       await this.articleRepository.save(updatedArticle);
-      response.json({ message: "Article mis à jour", article: updatedArticle });
+      return response.json({ message: "Article mis à jour", article: updatedArticle });
     } catch (error) {
       console.error("Erreur lors de la mise à jour de l'article:", error);
-      response
+      return response
         .status(500)
         .json({ message: "Erreur lors de la mise à jour de l'article", error });
     }
   }
-
-  async deleteArticle(request: Request, response: Response) {
+  async deleteArticle(request: Request, response: Response): Promise<Response> {
     const queryRunner = AppDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -196,14 +196,14 @@ export class ArticleController {
       await queryRunner.manager.remove(Article, article);
 
       await queryRunner.commitTransaction();
-      response.json({
+      return response.json({
         message: "Article et données associées supprimés avec succès",
         success: true,
       });
     } catch (error) {
       await queryRunner.rollbackTransaction();
       console.error("Erreur lors de la suppression de l'article:", error);
-      response.status(500).json({
+      return response.status(500).json({
         message: "Erreur lors de la suppression de l'article",
         error,
         success: false,
@@ -211,5 +211,4 @@ export class ArticleController {
     } finally {
       await queryRunner.release();
     }
-  }
-}
+  }}

@@ -51,13 +51,12 @@ export class SegmentationController {
       }
       const updatedSegmentation = Object.assign(segmentation, request.body);
       await this.segmentationRepository.save(updatedSegmentation);
-      response.json({ message: "Segmentation mise à jour", segmentation: updatedSegmentation });
+      return response.json({ message: "Segmentation mise à jour", segmentation: updatedSegmentation });
     } catch (error) {
       console.error("Erreur lors de la mise à jour de la segmentation:", error);
-      response.status(500).json({ message: "Erreur lors de la mise à jour de la segmentation", error });
+      return response.status(500).json({ message: "Erreur lors de la mise à jour de la segmentation", error });
     }
   }
-
   async deleteSegmentation(request: Request, response: Response) {
     try {
       const id = parseInt(request.params.id);
@@ -66,10 +65,9 @@ export class SegmentationController {
         return response.status(404).json({ message: "Segmentation non trouvée" });
       }
       await this.segmentationRepository.remove(segmentation);
-      response.json({ message: "Segmentation supprimée" });
+      return response.json({ message: "Segmentation supprimée" });
     } catch (error) {
       console.error("Erreur lors de la suppression de la segmentation:", error);
-      response.status(500).json({ message: "Erreur lors de la suppression de la segmentation", error });
+      return response.status(500).json({ message: "Erreur lors de la suppression de la segmentation", error });
     }
-  }
-}
+  }}

@@ -349,7 +349,7 @@ export class CommandeController {
     }
   }
 
-  async supprimerCommande(request: Request, response: Response) {
+  async supprimerCommande(request: Request, response: Response): Promise<void> {
     const queryRunner = AppDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -365,7 +365,8 @@ export class CommandeController {
 
       if (!commande) {
         await queryRunner.rollbackTransaction();
-        return response.status(404).json({ message: "Commande non trouvée" });
+        response.status(404).json({ message: "Commande non trouvée" });
+        return;
       }
 
       // First, delete all stock records related to this command
@@ -401,8 +402,7 @@ export class CommandeController {
       await queryRunner.release();
     }
   }
-
-  async uploadSignature(request: Request, response: Response) {
+  async uploadSignature(request: Request, response: Response): Promise<void> {
     upload.single("signature")(request, response, async (err) => {
       if (err) {
         return response.status(400).json({
@@ -427,17 +427,19 @@ export class CommandeController {
       if (request.file) {
         commande.signature_path = request.file.path;
         await this.commandeRepository.save(commande);
-        response.json({
+        return response.json({
           message: "Signature uploadée avec succès🥰",
           commande,
         });
       } else {
-        response.status(400).json({ message: "Aucun fichier n'a été uploadé" });
+        return response
+          .status(400)
+          .json({ message: "Aucun fichier n'a été uploadé" });
       }
     });
   }
 
-  async generatePDF(request: Request, response: Response) {
+  async generatePDF(request: Request, response: Response): Promise<void> {
     try {
       const id = parseInt(request.params.id);
       const commande = await this.commandeRepository.findOne({
@@ -451,7 +453,8 @@ export class CommandeController {
       });
 
       if (!commande) {
-        return response.status(404).json({ message: "Commande non trouvée" });
+        response.status(404).json({ message: "Commande non trouvée" });
+        return;
       }
 
       const doc = new PDFDocument({ size: "A4", margin: 50 });
@@ -592,10 +595,10 @@ export class CommandeController {
 
       doc.end();
     } catch (error) {
-      console.error("Erreur lors de la génération du PDF:", error);
-      response
-        .status(500)
-        .json({ message: "Erreur lors de la génération du PDF", error });
+      response.status(500).json({ 
+        message: "Erreur lors de la génération du PDF", 
+        error 
+      });
     }
   }
 
@@ -623,7 +626,7 @@ export class CommandeController {
   //   }
   // }
 
-  async annulerCommande(request: Request, response: Response) {
+  async annulerCommande(request: Request, response: Response): Promise<Response | void> {
     const queryRunner = AppDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -661,14 +664,14 @@ export class CommandeController {
 
       await queryRunner.commitTransaction();
 
-      response.json({
+      return response.json({
         message: "Commande annulée et stock mis à jour",
         commande,
       });
     } catch (error) {
       await queryRunner.rollbackTransaction();
       console.error("Erreur lors de l'annulation de la commande:", error);
-      response.status(500).json({
+      return response.status(500).json({
         message: "Erreur lors de l'annulation de la commande",
         error,
       });
@@ -676,7 +679,6 @@ export class CommandeController {
       await queryRunner.release();
     }
   }
-
   async obtenirCommandesAnnulees(request: Request, response: Response) {
     try {
       const commandesAnnulees = await this.commandeRepository.find({
@@ -721,7 +723,7 @@ export class CommandeController {
     }
   }
 
-  async restaurerCommande(request: Request, response: Response) {
+  async restaurerCommande(request: Request, response: Response): Promise<Response | void> {
     const queryRunner = AppDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -759,11 +761,11 @@ export class CommandeController {
 
       await queryRunner.commitTransaction();
 
-      response.json({ message: "Commande restaurée", commande });
+      return response.json({ message: "Commande restaurée", commande });
     } catch (error) {
       await queryRunner.rollbackTransaction();
       console.error("Erreur lors de la restauration de la commande:", error);
-      response.status(500).json({
+      return response.status(500).json({
         message: "Erreur lors de la restauration de la commande",
         error,
       });
@@ -771,8 +773,7 @@ export class CommandeController {
       await queryRunner.release();
     }
   }
-
-  async mettreAJourDescription(request: Request, response: Response) {
+  async mettreAJourDescription(request: Request, response: Response): Promise<Response> {
     try {
       const id = parseInt(request.params.id);
       const { description } = request.body;
@@ -785,16 +786,15 @@ export class CommandeController {
       }
       commande.commentaire = description;
       await this.commandeRepository.save(commande);
-      response.json({ message: "Description mise à jour", commande });
+      return response.json({ message: "Description mise à jour", commande });
     } catch (error) {
       console.error("Erreur lors de la mise à jour de la description:", error);
-      response.status(500).json({
+      return response.status(500).json({
         message: "Erreur lors de la mise à jour de la description",
         error,
       });
     }
-  }
-}
+  }}
 
 interface ArticleData {
   id: number;

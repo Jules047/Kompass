@@ -51,13 +51,12 @@ export class MoyenPaiementController {
       }
       const updatedMoyenPaiement = Object.assign(moyenPaiement, request.body);
       await this.moyenPaiementRepository.save(updatedMoyenPaiement);
-      response.json({ message: "Moyen de paiement mis à jour", moyenPaiement: updatedMoyenPaiement });
+      return response.json({ message: "Moyen de paiement mis à jour", moyenPaiement: updatedMoyenPaiement });
     } catch (error) {
       console.error("Erreur lors de la mise à jour du moyen de paiement:", error);
-      response.status(500).json({ message: "Erreur lors de la mise à jour du moyen de paiement", error });
+      return response.status(500).json({ message: "Erreur lors de la mise à jour du moyen de paiement", error });
     }
   }
-
   async deleteMoyenPaiement(request: Request, response: Response) {
     try {
       const id = parseInt(request.params.id);
@@ -66,10 +65,9 @@ export class MoyenPaiementController {
         return response.status(404).json({ message: "Moyen de paiement non trouvé" });
       }
       await this.moyenPaiementRepository.remove(moyenPaiement);
-      response.json({ message: "Moyen de paiement supprimé" });
+      return response.json({ message: "Moyen de paiement supprimé" });
     } catch (error) {
       console.error("Erreur lors de la suppression du moyen de paiement:", error);
-      response.status(500).json({ message: "Erreur lors de la suppression du moyen de paiement", error });
+      return response.status(500).json({ message: "Erreur lors de la suppression du moyen de paiement", error });
     }
-  }
-}
+  }}

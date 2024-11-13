@@ -42,7 +42,7 @@ export class StockController {
     }
   }
 
-  async addEntry(request: Request, response: Response) {
+  async addEntry(request: Request, response: Response): Promise<Response | void> {
     const queryRunner = AppDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -74,7 +74,7 @@ export class StockController {
         where: { id: articles_id },
       });
 
-      response.json({
+      return response.json({
         message: "Entrée de stock ajoutée",
         stock,
         article: updatedArticle,
@@ -82,7 +82,7 @@ export class StockController {
     } catch (error) {
       await queryRunner.rollbackTransaction();
       console.error("Erreur lors de l'ajout d'entrée de stock:", error);
-      response.status(500).json({
+      return response.status(500).json({
         message: "Erreur lors de l'ajout d'entrée de stock",
         error,
       });
@@ -90,8 +90,7 @@ export class StockController {
       await queryRunner.release();
     }
   }
-
-  async addExit(request: Request, response: Response) {
+  async addExit(request: Request, response: Response): Promise<Response | void> {
     const queryRunner = AppDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -131,14 +130,14 @@ export class StockController {
       });
 
       if (updatedArticle && updatedArticle.quantite <= 2) {
-        response.json({
+        return response.json({
           message: `Sortie de stock ajoutée. ALERTE: La quantité de ${updatedArticle.designation} est basse (${updatedArticle.quantite} unités restantes)!`,
           stock,
           article: updatedArticle,
           isLowStock: true,
         });
       } else {
-        response.json({
+        return response.json({
           message: "Sortie de stock ajoutée",
           stock,
           article: updatedArticle,
@@ -148,7 +147,7 @@ export class StockController {
     } catch (error) {
       await queryRunner.rollbackTransaction();
       console.error("Erreur lors de l'ajout de sortie de stock:", error);
-      response.status(500).json({
+      return response.status(500).json({
         message: "Erreur lors de l'ajout de sortie de stock",
         error,
       });
@@ -156,7 +155,6 @@ export class StockController {
       await queryRunner.release();
     }
   }
-
   async getStockStatus(request: Request, response: Response) {
     try {
       const stocks = await this.stockRepository
