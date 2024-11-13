@@ -31,18 +31,15 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Ajout du healthcheck
-app.get("/", (req, res) => {
-  res.status(200).json({
-    message: "API is running",
-    version: "1.0.0",
+// Route principale pour le healthcheck
+app.get('/', (req, res) => {
+  res.status(200).json({ 
+    message: 'API Kompass Business en ligne',
+    status: 'running'
   });
 });
 
-app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'ok' });
-});
-
+// Vos configurations existantes
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
