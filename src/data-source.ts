@@ -36,8 +36,11 @@ const { DATABASE_URL } = process.env;
 export const AppDataSource = new DataSource({
   type: "postgres",
   url: "postgresql://postgres:VLCfPengmpwglLhUJxNarrqHzkZdcvbd@autorack.proxy.rlwy.net:58904/railway",
+  ssl: {
+    rejectUnauthorized: false
+  },
   synchronize: false,
-  logging: false,
+  logging: true,
   entities: [
     Stock,
     Article,
@@ -68,12 +71,22 @@ export const AppDataSource = new DataSource({
   migrations: [path.join(__dirname, "/migration/*.ts")],
   subscribers: [path.join(__dirname, "/subscriber/**/*.ts")],
 });
+
 export const initializeDataSource = async () => {
-  try {
-    await AppDataSource.initialize();
-    console.log("Data Source has been initialized!");
-  } catch (err) {
-    console.error("Error during Data Source initialization:", err);
-    throw err;
+  let tentatives = 5;
+  while (tentatives) {
+    try {
+      await AppDataSource.initialize();
+      console.log("Base de données initialisée avec succès!");
+      return;
+    } catch (err) {
+      console.error("Erreur d'initialisation:", err);
+      tentatives -= 1;
+      if (tentatives === 0) {
+        throw new Error("Impossible de se connecter à la base de données après 5 tentatives");
+      }
+      console.log(`Nouvelle tentative dans 5 secondes... (${tentatives} restantes)`);
+      await new Promise(resolve => setTimeout(resolve, 5000));
+    }
   }
 };
