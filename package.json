@@ -5,6 +5,7 @@
   "scripts": {
     "build": "tsc",
     "start": "nodemon --exec ts-node src/index.ts",
+    "railway:deploy": "node dist/index.js",
     "typeorm": "ts-node ./node_modules/typeorm/cli.js",
     "migration:generate": "npm run typeorm migration:generate -- -d src/data-source.ts",
     "migration:run": "npm run typeorm migration:run -- -d src/data-source.ts",
