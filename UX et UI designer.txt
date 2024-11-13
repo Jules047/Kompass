@@ -1,0 +1,117 @@
+Dashboard principal
+
+Vue d'ensemble des KPIs (ventes, stocks, tickets en cours, etc.)
+Accès rapide aux principales fonctionnalités
+Gestion des familles de produits
+
+Liste des familles avec options de tri et de filtrage
+Formulaire d'ajout/modification de famille
+Affichage des taux de TVA associés
+Gestion des articles
+
+Liste des articles avec options de recherche avancée
+Formulaire détaillé d'ajout/modification d'article
+Affichage des stocks, prix, marges, etc.
+Indicateur visuel pour articles complets/incomplets
+Gestion des stocks
+
+Tableau de bord des niveaux de stock
+Interface pour ajuster les quantités
+Historique des mouvements de stock
+Segmentation clients
+
+Liste des segments avec statistiques
+Formulaire de création/modification de segment
+Outil d'attribution de segment aux clients
+Gestion des clients
+
+Liste des clients avec recherche et filtres
+Fiche client détaillée (informations, historique, solde)
+Formulaire d'ajout/modification de client
+Gestion des moyens de paiement
+
+Liste des moyens de paiement
+Formulaire d'ajout/modification
+Facturation
+
+Création de nouvelle facture avec sélection client/articles
+Liste des factures avec statut et solde
+Vue détaillée de facture avec historique des paiements
+Gestion des devis
+
+Création de devis avec interface similaire à la facturation
+Liste des devis avec statut (signé/non signé)
+Conversion de devis en facture
+Historique de facturation
+
+Vue consolidée de l'historique par client/article
+Outils de filtrage et d'exportation
+Gestion des fournisseurs
+
+Liste des fournisseurs avec soldes
+Fiche fournisseur détaillée
+Formulaire d'ajout/modification de fournisseur
+Factures d'achat
+
+Interface de création de facture d'achat
+Liste des factures d'achat avec statut et solde
+Vue détaillée avec historique des paiements
+Gestion des commandes clients
+
+Interface de création de commande
+Liste des commandes avec statut et dates
+Vue détaillée de commande avec suivi
+Échéances de paiement
+
+Calendrier des échéances
+Interface de configuration des échéances par client
+Gestion des machines
+
+Catalogue des machines avec filtres (marque, couleur)
+Fiche détaillée par machine
+Formulaire d'ajout/modification
+Gestion des vendeurs
+
+Liste des vendeurs avec informations clés
+Fiche vendeur détaillée
+Formulaire d'ajout/modification de vendeur
+Prise en charge
+
+Formulaire de création de prise en charge
+Liste des prises en charge avec statut
+Vue détaillée avec informations machine et client
+Service après-vente
+
+Tableau de bord des activités SAV
+Interface de suivi des machines (récupération, restitution)
+Historique des interventions
+Gestion des tickets de support
+
+Interface de création de ticket
+Liste des tickets avec filtres (urgence, statut, catégorie)
+Vue détaillée de ticket avec historique et actions
+Rapports et analyses
+
+Interface de génération de rapports personnalisables
+Visualisations graphiques des données clés
+Options d'export en différents formats
+Configuration TVA
+
+Interface de gestion des taux de TVA par famille de produits
+Calcul des marges
+
+Outil de calcul et visualisation des marges par article
+Tableaux et graphiques de comparaison
+Gestion de l'état des articles
+
+Interface pour marquer les articles complets/incomplets
+Indicateurs visuels dans les listes d'articles
+Suivi des tickets de support
+
+Interface de gestion de l'urgence et du blocage
+Tableaux de bord avec indicateurs visuels
+Catégorisation des tickets
+
+Interface de définition des catégories (domaine, secteur)
+Outil d'attribution des catégories aux tickets
+Chaque interface devrait être conçue avec une attention particulière à l'ergonomie, à la cohérence visuelle et à l'efficacité d'utilisation, en respectant les meilleures pratiques de UX/UI design.
