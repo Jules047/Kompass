@@ -31,27 +31,24 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Configuration de base
+// Base configurations
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Ajout avant les autres routes
+// Root route handler
 app.get('/', (req, res) => {
   res.status(200).json({
-    message: 'API Kompass Business',
+    status: 'online',
+    message: 'Kompass Business API',
     version: '1.0.0',
-    endpoints: {
-      articles: '/api/articles',
-      familles: '/api/familles',
-      stocks: '/api/stocks'
-    }
+    timestamp: new Date().toISOString()
   });
 });
 
-// Configuration des routes
-app.use('/api', familleRoutes);
+// API routes
 app.use('/api', articleRoutes);
+app.use('/api', familleRoutes);
 app.use('/api', stockRoutes);
 app.use('/api', segmentationRoutes);
 app.use('/api', clientRoutes);
@@ -73,15 +70,15 @@ app.use('/api/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/api', sousfamilleRoutes);
 
-// Initialisation directe
+// Database initialization and server start
 AppDataSource.initialize()
   .then(() => {
-    console.log('Connexion à la base de données établie avec succès!');
+    console.log('Database connection established');
     app.listen(port, () => {
-      console.log(`Serveur démarré sur le port ${port}`);
+      console.log(`Server running on port ${port}`);
     });
   })
   .catch((error) => {
-    console.error('Erreur de connexion à la base de données:', error);
+    console.error('Database connection error:', error);
     process.exit(1);
   });
