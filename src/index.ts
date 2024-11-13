@@ -36,12 +36,16 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Route healthcheck primaire
+// Ajout avant les autres routes
 app.get('/', (req, res) => {
-  res.status(200).json({ 
-    status: 'ok',
-    message: 'API Kompass Business en ligne',
-    timestamp: new Date().toISOString()
+  res.status(200).json({
+    message: 'API Kompass Business',
+    version: '1.0.0',
+    endpoints: {
+      articles: '/api/articles',
+      familles: '/api/familles',
+      stocks: '/api/stocks'
+    }
   });
 });
 
